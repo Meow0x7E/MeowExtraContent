@@ -7,10 +7,14 @@ import mindustry.mod.*
 import mindustry.ui.dialogs.*
 
 class MeowExtraContent : Mod(){
+    companion object {
+        const val NAME = "meow-extra-content"
+    }
 
     init{
-        //listen for game load event
+        Log.info("喵喵喵")
 /*
+        //listen for game load event
         Events.on(ClientLoadEvent::class.java){
             //show dialog upon startup
             Time.runTask(10f){
@@ -18,7 +22,7 @@ class MeowExtraContent : Mod(){
                     cont.apply{
                         add("behold").row()
                         //mod sprites are prefixed with the mod name (this mod is called 'example-kotlin-mod' in its config)
-                        image(Core.atlas.find("meow-extra-content-frog")).pad(20f).row()
+                        image(Core.atlas.find("${NAME}-frog")).pad(20f).row()
                         button("I see"){ hide() }.size(100f, 50f)
                     }
                     show()
