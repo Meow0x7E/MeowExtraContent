@@ -1,20 +1,20 @@
 #the mod name as displayed in-game
-displayName: "Kotlin Mod Template"
+displayName: "MeowExtraContent"
 
 #the internal name of your mod
-name: "example-kotlin-mod"
+name: "meow-extra-content"
 
 #your name
-author: "You"
+author: "Meow0x7E"
 
 #the fully qualified main class of the mod
-main: "example.ExampleKotlinMod"
+main: "meow0x7e.MeowExtraContent"
 
 #the mod description as seen in the mod dialog
-description: "A Mindustry Kotlin mod template."
+description: "有需求，自己实现。"
 
 #the mod version
-version: 1.0
+version: 0.2
 
 #the minimum game build required to run this mod
-minGameVersion: 129
+minGameVersion: 146
