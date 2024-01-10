@@ -14,7 +14,7 @@ main: "meow0x7e.MeowExtraContent"
 description: "我觉得这些应该对游戏体验有一定帮助喵~"
 
 #the mod version
-version: 0.3
+version: 0.2.1
 
 #the minimum game build required to run this mod
 minGameVersion: 146

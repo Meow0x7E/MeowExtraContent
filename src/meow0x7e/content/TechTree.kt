@@ -1,9 +1,9 @@
 package meow0x7e.content
 
-import mindustry.content.Blocks as MindustryBlocks
-import mindustry.content.Planets
 import mindustry.content.TechTree.*
 import mindustry.ctype.UnlockableContent
+import mindustry.content.Blocks as MindustryBlocks
+import mindustry.content.Planets as MindustryPlanets
 
 class TechTree {
     companion object {
@@ -22,6 +22,7 @@ class TechTree {
                         lambda(it)
                         return
                     }
+
                     it.children.any() -> it.findNode(content, lambda)
                 }
             }
@@ -52,7 +53,7 @@ class TechTree {
         }
 
         fun load() {
-            with(Planets.serpulo.techTree) {
+            with(MindustryPlanets.serpulo.techTree) {
                 findAndAddNode(
                     MindustryBlocks.mechanicalDrill,
                     Blocks.mechanicalDrillSmall,
