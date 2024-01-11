@@ -22,11 +22,11 @@ class Blocks {
         lateinit var pneumaticDrillSmall: Block
         lateinit var pneumaticDrillLarge: Block
         lateinit var pneumaticDrillExtraLarge: Block
-
         fun load() {
-            (fun(name: String, size: Int): Block {
+
+            { name: String, size: Int ->
                 val scalingFactor = size.toFloat().pow(2) / MindustryBlocks.mechanicalDrill.size.toFloat().pow(2)
-                return Drill(name).apply {
+                Drill(name).apply {
                     requirements(Category.production, with(MindustryItems.copper, Mathf.round(12f * scalingFactor)))
                     tier = 2
                     drillTime = 600f
@@ -42,15 +42,15 @@ class Blocks {
                         }
                     }
                 }
-            }).let {
+            }.let {
                 mechanicalDrillSmall = it("mechanical-drill-small", 1)
                 mechanicalDrillLarge = it("mechanical-drill-large", 3)
                 mechanicalDrillExtraLarge = it("mechanical-drill-extra-large", 4)
-            }
+            };
 
-            (fun(name: String, size: Int): Block {
+            { name: String, size: Int ->
                 val scalingFactor = size.toFloat().pow(2) / MindustryBlocks.pneumaticDrill.size.toFloat().pow(2)
-                return Drill(name).apply {
+                Drill(name).apply {
                     requirements(
                         Category.production,
                         with(MindustryItems.copper, Mathf.round(18f * scalingFactor), MindustryItems.graphite, Mathf.round(10f * scalingFactor))
@@ -67,7 +67,7 @@ class Blocks {
                         }
                     }
                 }
-            }).let {
+            }.let {
                 pneumaticDrillSmall = it("pneumatic-drill-small", 2)
                 pneumaticDrillLarge = it("pneumatic-drill-large", 3)
                 pneumaticDrillExtraLarge = it("pneumatic-drill-extra-large", 4)

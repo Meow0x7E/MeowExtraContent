@@ -1,20 +1,7 @@
-#the mod name as displayed in-game
 displayName: "MeowExtraContent"
-
-#the internal name of your mod
 name: "meow-extra-content"
-
-#your name
 author: "Meow0x7E"
-
-#the fully qualified main class of the mod
 main: "meow0x7e.MeowExtraContent"
-
-#the mod description as seen in the mod dialog
 description: "我觉得这些应该对游戏体验有一定帮助喵~"
-
-#the mod version
-version: 0.2.1
-
-#the minimum game build required to run this mod
+version: 0.2.2
 minGameVersion: 146

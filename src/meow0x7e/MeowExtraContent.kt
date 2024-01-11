@@ -38,11 +38,12 @@ class MeowExtraContent : Mod() {
         BaseDialog(Core.bundle.get("base-dialog.changelog.title")).apply BaseDialog@{
             cont.apply {
                 (fun(text: String) = add(text).left().row()).let {
+                    it("v0.2.2")
+                    it("将 Gradle 改为 Kotlin DSL")
                     it("v0.2.1")
                     it("添加 更新日志")
                     it("给那六个钻头添加了监听事件自动解锁，顺手用了一种更舒服的方式构造他们")
                     it("补充了那三个气动钻头的 bundle")
-                    row()
                     it("v0.1 - v0.2")
                     it("添加 将方块插入到科技树的方法")
                     it("添加 气动钻头-小型，大小为1，其他参数和普通气动钻头一样")
