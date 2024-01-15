@@ -1,11 +1,10 @@
-import java.nio.file.Files
-
 // 关于我从啥都不会，到6小时速通 Gradle Kotlin DSL 这件事
 
 buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven { url = uri("https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository") }
         maven { url = uri("https://jitpack.io") }
     }
 
@@ -20,7 +19,8 @@ group = "meow0x7e"
 version = "v0.2.2"
 
 val mindustryVersion = "v146"
-val sdkRoot: String? = (System.getenv("ANDROID_HOME") ?: System.getenv("ANDROID_SDK_ROOT"))
+val jabelVersion = "93fde537c7"
+val sdkHome: String? = (System.getenv("ANDROID_HOME") ?: System.getenv("ANDROID_SDK_ROOT"))
 
 plugins {
     kotlin("jvm") version ("1.5.21") apply true
@@ -29,6 +29,7 @@ plugins {
 repositories {
     mavenLocal()
     mavenCentral()
+    maven { url = uri("https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository") }
     maven { url = uri("https://jitpack.io") }
 }
 
@@ -37,6 +38,7 @@ dependencies {
     compileOnly("com.github.Anuken.Arc:arc-core:${mindustryVersion}")
     compileOnly("com.github.Anuken.Mindustry:core:${mindustryVersion}")
     implementation("com.github.liplum:MultiCrafterLib:v1.8")
+    annotationProcessor("com.github.Anuken:jabel:$jabelVersion")
 }
 
 java {
@@ -68,14 +70,14 @@ tasks.withType<Jar> {
 tasks.register("jarAndroid") {
     dependsOn("jar")
     doLast {
-        if (!File(sdkRoot!!).exists()) throw GradleException("No valid Android SDK found. Ensure that ANDROID_HOME is set to your Android SDK directory.")
+        if (!File(sdkHome!!).exists()) throw GradleException("No valid Android SDK found. Ensure that ANDROID_HOME is set to your Android SDK directory.")
 
         val platformRoot =
-            File("${sdkRoot}/platforms/").listFiles()?.find { File(it!!, "android.jar").exists() }
+            File("${sdkHome}/platforms/").listFiles()?.find { File(it!!, "android.jar").exists() }
                 ?: throw GradleException("No android.jar found. Ensure that you have an Android platform installed.")
 
         val buildToolRoot =
-            File("${sdkRoot}/build-tools/").listFiles()?.find { File(it, "d8").exists() }
+            File("${sdkHome}/build-tools/").listFiles()?.find { File(it, "d8").exists() }
                 ?: throw GradleException("No d8 found. Ensure that you have an Android build-tool installed.")
 
         //dex and desugar files - this requires d8 in your PATH
@@ -106,6 +108,11 @@ tasks.register("deploy", Jar::class) {
     dependsOn("jar")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveFileName.set("${project.name}-${project.version}.jar")
+
+    from(
+        zipTree("${buildDir}/libs/${project.name}Desktop.jar"),
+        zipTree("${buildDir}/libs/${project.name}Android.jar")
+    )
 
     doLast {
         delete("${buildDir}/libs/${project.name}Desktop.jar")
