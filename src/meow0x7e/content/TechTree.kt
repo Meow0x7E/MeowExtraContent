@@ -1,7 +1,10 @@
 package meow0x7e.content
 
+import arc.Events
+import arc.util.Log
 import mindustry.content.TechTree.*
 import mindustry.ctype.UnlockableContent
+import mindustry.game.EventType
 import mindustry.content.Blocks as MindustryBlocks
 import mindustry.content.Planets as MindustryPlanets
 
@@ -50,6 +53,29 @@ class TechTree {
             val nodes = ArrayList<TechNode>()
             contents.forEach { nodes.add(node(it)) }
             this.findAndAddNode(content, *nodes.toTypedArray())
+        }
+
+        /**
+         * 同步解锁指定内容。
+         *
+         * 当 [checkContent] 解锁时，自动解锁 [unlockContents] 中的所有内容。如果 [checkContent] 已经解锁，则在客户端首次加载完成时解锁 [unlockContents] 中未解锁的内容。
+         *
+         * @param checkContent 需要被检查是否解锁的内容
+         * @param unlockContents 当 [checkContent] 解锁时，需要同步解锁的内容列表
+         */
+        @JvmStatic
+        fun syncUnlocks(checkContent: UnlockableContent,vararg unlockContents: UnlockableContent) {
+            if (!checkContent.unlocked()) {
+                Log.debug("监听事件 EventType.UnlockEvent，当 ${checkContent.name} 解锁时同步解锁 ${unlockContents.joinToString("、")}")
+                Events.on(EventType.UnlockEvent::class.java) { event ->
+                    if (event.content == checkContent) unlockContents.forEach { it.unlock() }
+                }
+                return
+            }
+            Log.debug("监听事件 EventType.ClientLoadEvent，当客户端首次加载完成时同步解锁 ${unlockContents.joinToString("、")}")
+            Events.on(EventType.ClientLoadEvent::class.java) {
+                unlockContents.forEach { if (!it.unlocked()) it.unlock() }
+            }
         }
 
         fun load() {

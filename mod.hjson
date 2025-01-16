@@ -3,5 +3,5 @@ name: "meow-extra-content"
 author: "Meow0x7E"
 main: "meow0x7e.MeowExtraContent"
 description: "我觉得这些应该对游戏体验有一定帮助喵~"
-version: 0.2.2
+version: 0.2.3
 minGameVersion: 146

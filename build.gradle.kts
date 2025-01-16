@@ -5,10 +5,10 @@ buildscript {
         mavenLocal()
         mavenCentral()
         maven { url = uri("https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository") }
-        maven { url = uri("https://jitpack.io") }
+        maven { url = uri("https://www.jitpack.io") }
     }
 
-    val kotlinVersion = "1.5.21"
+    val kotlinVersion = "2.0.0"
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
@@ -16,28 +16,30 @@ buildscript {
 }
 
 group = "meow0x7e"
-version = "v0.2.2"
+version = "v0.2.3"
 
 val mindustryVersion = "v146"
 val jabelVersion = "93fde537c7"
-val sdkHome: String? = (System.getenv("ANDROID_HOME") ?: System.getenv("ANDROID_SDK_ROOT"))
+val sdkHome: String = System.getenv("ANDROID_HOME")
+    ?: System.getenv("ANDROID_SDK_ROOT")
+    ?: "${System.getenv("HOME")}/Android/Sdk"
 
 plugins {
-    kotlin("jvm") version ("1.5.21") apply true
+    kotlin("jvm") version ("2.0.0") apply true
 }
 
 repositories {
     mavenLocal()
     mavenCentral()
     maven { url = uri("https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository") }
-    maven { url = uri("https://jitpack.io") }
+    maven { url = uri("https://www.jitpack.io") }
 }
 
 dependencies {
-    api(kotlin("stdlib"))
+    api(kotlin("stdlib", "2.0.0"))
     compileOnly("com.github.Anuken.Arc:arc-core:${mindustryVersion}")
     compileOnly("com.github.Anuken.Mindustry:core:${mindustryVersion}")
-    implementation("com.github.liplum:MultiCrafterLib:v1.8")
+    //implementation("com.github.liplum:MultiCrafterLib:v1.8")
     annotationProcessor("com.github.Anuken:jabel:$jabelVersion")
 }
 
@@ -58,11 +60,10 @@ val jar = tasks.jar.get()
 
 tasks.withType<Jar> {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    archiveFileName.set("${project.name}Desktop.jar")
+    archiveFileName.set("${project.name}-${project.version}-Desktop.jar")
 
-    from(
-        configurations.runtimeClasspath.get().files()
-            .map { if (it.isDirectory) it else zipTree(it) })
+    from(configurations.runtimeClasspath.get().toList()
+        .map { if (it.isDirectory) it else zipTree(it) })
     from(rootDir) { include("LICENSE", "mod.hjson") }
     from("assets/") { include("**") }
 }
@@ -70,7 +71,7 @@ tasks.withType<Jar> {
 tasks.register("jarAndroid") {
     dependsOn("jar")
     doLast {
-        if (!File(sdkHome!!).exists()) throw GradleException("No valid Android SDK found. Ensure that ANDROID_HOME is set to your Android SDK directory.")
+        if (!File(sdkHome).exists()) throw GradleException("No valid Android SDK found. Ensure that ANDROID_HOME is set to your Android SDK directory.")
 
         val platformRoot =
             File("${sdkHome}/platforms/").listFiles()?.find { File(it!!, "android.jar").exists() }
@@ -95,8 +96,8 @@ tasks.register("jarAndroid") {
                 add("--min-api")
                 add("14")
                 add("--output")
-                add("${project.name}Android.jar")
-                add("${project.name}Desktop.jar")
+                add("${project.name}-${project.version}-Android.jar")
+                add("${project.name}-${project.version}-Desktop.jar")
             })
             workingDir = File("${buildDir}/libs/")
         }
@@ -104,18 +105,17 @@ tasks.register("jarAndroid") {
 }
 
 tasks.register("deploy", Jar::class) {
-    dependsOn(tasks.getByName("jarAndroid"))
-    dependsOn("jar")
+    dependsOn(tasks.getByName("jarAndroid"), "jar")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveFileName.set("${project.name}-${project.version}.jar")
 
     from(
-        zipTree("${buildDir}/libs/${project.name}Desktop.jar"),
-        zipTree("${buildDir}/libs/${project.name}Android.jar")
+        zipTree("${buildDir}/libs/${project.name}-${project.version}-Desktop.jar"),
+        zipTree("${buildDir}/libs/${project.name}-${project.version}-Android.jar")
     )
 
     doLast {
-        delete("${buildDir}/libs/${project.name}Desktop.jar")
-        delete("${buildDir}/libs/${project.name}Android.jar")
+        delete("${buildDir}/libs/${project.name}-${project.version}-Desktop.jar")
+        delete("${buildDir}/libs/${project.name}-${project.version}-Android.jar")
     }
 }

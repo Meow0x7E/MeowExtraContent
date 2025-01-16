@@ -2,7 +2,9 @@ package meow0x7e.content
 
 import arc.Events
 import arc.math.Mathf
-import mindustry.game.EventType.UnlockEvent
+import arc.util.Log
+import meow0x7e.content.TechTree.Companion.syncUnlocks
+import mindustry.game.EventType
 import mindustry.type.Category
 import mindustry.type.ItemStack.with
 import mindustry.world.Block
@@ -23,11 +25,13 @@ class Blocks {
         lateinit var pneumaticDrillLarge: Block
         lateinit var pneumaticDrillExtraLarge: Block
         fun load() {
-
             { name: String, size: Int ->
                 val scalingFactor = size.toFloat().pow(2) / MindustryBlocks.mechanicalDrill.size.toFloat().pow(2)
                 Drill(name).apply {
-                    requirements(Category.production, with(MindustryItems.copper, Mathf.round(12f * scalingFactor)))
+                    requirements(
+                        Category.production,
+                        with(MindustryItems.copper, Mathf.round(12f * scalingFactor))
+                    )
                     tier = 2
                     drillTime = 600f
                     this.size = size
@@ -35,25 +39,35 @@ class Blocks {
                     envEnabled = envEnabled xor Env.space
 
                     consumeLiquid(MindustryLiquids.water, 0.05f * scalingFactor).boost()
-
-                    Events.on(UnlockEvent::class.java) {
-                        if (it.content == MindustryBlocks.mechanicalDrill) {
-                            unlock()
-                        }
-                    }
                 }
             }.let {
+                Log.debug("注册方块 mechanical-drill-small")
                 mechanicalDrillSmall = it("mechanical-drill-small", 1)
+                Log.debug("注册方块 mechanical-drill-large")
                 mechanicalDrillLarge = it("mechanical-drill-large", 3)
+                Log.debug("注册方块 mechanical-drill-extra-large")
                 mechanicalDrillExtraLarge = it("mechanical-drill-extra-large", 4)
-            };
+            }
+
+            syncUnlocks(
+                MindustryBlocks.mechanicalDrill,
+                mechanicalDrillSmall,
+                mechanicalDrillLarge,
+                mechanicalDrillExtraLarge
+            );
 
             { name: String, size: Int ->
-                val scalingFactor = size.toFloat().pow(2) / MindustryBlocks.pneumaticDrill.size.toFloat().pow(2)
+                val scalingFactor =
+                    size.toFloat().pow(2) / MindustryBlocks.pneumaticDrill.size.toFloat().pow(2)
                 Drill(name).apply {
                     requirements(
                         Category.production,
-                        with(MindustryItems.copper, Mathf.round(18f * scalingFactor), MindustryItems.graphite, Mathf.round(10f * scalingFactor))
+                        with(
+                            MindustryItems.copper,
+                            Mathf.round(18f * scalingFactor),
+                            MindustryItems.graphite,
+                            Mathf.round(10f * scalingFactor)
+                        )
                     )
                     tier = 3
                     drillTime = 400f
@@ -61,17 +75,27 @@ class Blocks {
 
                     consumeLiquid(MindustryLiquids.water, 0.06f * scalingFactor).boost()
 
-                    Events.on(UnlockEvent::class.java) {
+                    Events.on(EventType.UnlockEvent::class.java) {
                         if (it.content == MindustryBlocks.pneumaticDrill) {
                             unlock()
                         }
                     }
                 }
             }.let {
+                Log.debug("注册方块 pneumatic-drill-small")
                 pneumaticDrillSmall = it("pneumatic-drill-small", 2)
+                Log.debug("注册方块 pneumatic-drill-large")
                 pneumaticDrillLarge = it("pneumatic-drill-large", 3)
+                Log.debug("注册方块 pneumatic-drill-extra-large")
                 pneumaticDrillExtraLarge = it("pneumatic-drill-extra-large", 4)
             }
+
+            syncUnlocks(
+                MindustryBlocks.pneumaticDrill,
+                pneumaticDrillSmall,
+                pneumaticDrillLarge,
+                pneumaticDrillExtraLarge
+            )
         }
     }
 }
